@@ -21,7 +21,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, Arial, sans-serif; color: #1a1a1a; line-height: 1.5; }
   header { background: #1F4E78; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
-  header .logo { font-weight: 700; font-size: 20px; }
+  header .logo { font-weight: 700; font-size: 20px; cursor: pointer; }
   header button { background: #fff; color: #1F4E78; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; }
   .hero { padding: 60px 24px; text-align: center; background: #f4f6f8; }
   .hero h1 { font-size: 32px; margin-bottom: 12px; }
@@ -47,17 +47,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </head>
 <body>
 
-<!-- ========================================================= -->
-<!-- STEP B: Paste your GTM <noscript> snippet here              -->
-<!-- (right after opening <body> tag)                            -->
-<!-- ========================================================= -->
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P3M9GPB"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 <header>
-  <div class="logo">PracticeStore</div>
+  <div class="logo" data-cta="header_logo" data-location="Header">PracticeStore</div>
   <button data-cta="header_buy_now" data-location="Header">Buy Now</button>
 </header>
 
@@ -100,7 +96,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <footer>
   <p>PracticeStore &copy; 2026 — GA4 Practice Site</p>
-  <button data-cta="footer_buy_now" data-location="Footer">Buy Now</button>
+  <button data-location="Footer">Buy Now</button>
 </footer>
 
 <button class="debug-toggle" onclick="document.querySelector('.debug-box').classList.toggle('active')">Show dataLayer Log</button>
@@ -123,41 +119,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     console.log('dataLayer push:', obj);
   }
 
-  // Generic "Buy Now" buttons (header, hero, footer) -> generate_lead event
-  document.querySelectorAll('button[data-cta$="_buy_now"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      pushDataLayer({
-        event: 'generate_lead',
-        button_text: btn.textContent.trim(),
-        cta_location: btn.dataset.location,
-        form_name: 'hero_lead_form'
-      });
-
+  document.querySelector('.logo[data-cta="header_logo"]').addEventListener('click', () => {
+    pushDataLayer({
+      event: 'header_menu_click',
+      cta_text: 'practice store'
     });
   });
 
-  // Pricing card buttons -> select_item event
+  document.querySelector('button[data-cta="header_buy_now"]').addEventListener('click', () => {
+    pushDataLayer({
+      event: 'header_menu_click',
+      cta_text: 'buy now'
+    });
+  });
+
+  document.querySelector('button[data-cta="hero_buy_now"]').addEventListener('click', () => {
+    pushDataLayer({
+      event: 'top_banner_click',
+      cta_text: 'buy_now'
+    });
+  });
+
   document.querySelectorAll('button[data-cta="select_item"]').forEach(btn => {
     btn.addEventListener('click', () => {
       pushDataLayer({
-        event: 'select_item',
-        item_name: btn.dataset.item,
-        value: btn.dataset.value,
-        cta_location: btn.dataset.location
+        event: 'our_product_click',
+        cta_text: 'get started',
+        product_name: btn.dataset.item.toLowerCase()
       });
-
     });
   });
 
-  // Contact form submit -> form_submit event
   document.getElementById('contact-submit').addEventListener('click', (e) => {
     e.preventDefault();
     pushDataLayer({
-      event: 'form_submit',
-      form_id: 'contact_footer_form',
-      form_name: 'Contact Form'
+      event: 'contact_us_form',
+      cta_text: 'submit'
     });
-
   });
 </script>
 
